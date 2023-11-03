@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthRequestDto } from './dto/AuthRequestDto';
 import { postOTPDto } from './dto/postOTPDto';
 import { RegistrationDto } from './dto/UserRegistrationDto';
+import { TokenVerificationDto } from './dto/TokenVerificationDto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,8 +25,8 @@ export class AuthController {
   }
 
   @Post('verify-token')
-  verifyToken(@Body() token: any): any {
-    return this.authService.isValidToken(token.token);
+  verifyToken(@Body() token: TokenVerificationDto): any {
+    return this.authService.isValidToken(token.token, token.id);
   }
 
   @Post('register')

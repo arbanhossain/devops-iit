@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 import connection from '../db/db';
 import { DashboardService } from './dashboard.service';
 import { SubmissionDto } from './dto/SubmissionDto';
+import { InfoRequestDto } from './dto/InfoRequestDto';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -22,6 +23,11 @@ export class DashboardController {
   @Post('submit-info')
   submitInfo(@Body() info: SubmissionDto): any {
     this.dashService.submitInfo(info);
+  }
+
+  @Get('get-info')
+  getInfo(@Body() cred: InfoRequestDto) : any {
+    return this.dashService.getInfo(cred.token, cred.id);
   }
 
 }
