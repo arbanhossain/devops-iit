@@ -2,6 +2,8 @@ import {Controller, Inject, Injectable, HttpException, HttpStatus} from '@nestjs
 import { CreateIncomeDto } from './dto/CreateIncomeDto';
 import { CalculatedTax } from './dto/CalculatedTax';
 
+import * as Sentry from "@sentry/node";
+
 const CITY_CORPOS = ['RAJSHAHI', 'KHULNA', 'BARISAL', 'SYLHET', 'RANGPUR', 'MYMENSINGH'];
 
 @Injectable()
@@ -9,6 +11,10 @@ export class WizardService {
   constructor() {}
 
   calculate(income: CreateIncomeDto): number {
+    const transaction = Sentry.startTransaction({
+      op: "calculate",
+      name: "Calculate Tax",
+    });
     // console.log(income);
 
     /*
@@ -24,7 +30,10 @@ export class WizardService {
     let taxFreeIncome = 0;
     if (income.gender == 'M') { taxFreeIncome = 350000; }
     else if (income.gender == 'F' || income.age > 65) { taxFreeIncome = 400000; }
-    else throw new HttpException('Gender should be M or F', HttpStatus.INTERNAL_SERVER_ERROR);
+    else {
+      Sentry.captureException(new Error("Unsupported gender type"))
+      throw new HttpException('Gender should be M or F', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     let taxableIncome = Math.max(income.income - taxFreeIncome, 0);
     
@@ -53,6 +62,7 @@ export class WizardService {
     }
 
     let totalTax = tax_5pc + tax_10pc + tax_15pc + tax_20pc + tax_25pc;
+    transaction.finish();
 
     if (totalTax > 0) {
       return Math.max(totalTax, minimumTax);

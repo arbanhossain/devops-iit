@@ -7,6 +7,8 @@ import { postOTPDto } from './dto/postOTPDto';
 import * as jwt from 'jsonwebtoken';
 import { RegistrationDto } from './dto/UserRegistrationDto';
 
+import * as Sentry from "@sentry/node";
+
 @Injectable()
 export class AuthService {
   constructor() { }
@@ -36,6 +38,7 @@ export class AuthService {
         message: 'OTP sent'
       }
     } catch (error) {
+      Sentry.captureException(new Error("OTP could not be sent"))
       throw new HttpException('OTP not sent', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
@@ -49,6 +52,7 @@ export class AuthService {
 
     let res = await connection.execute('select * from otp where id = ? and pass = ?', [nid, otp])
     if (res.rows.length == 0) {
+      Sentry.captureException(new Error("OTP verification not resolved"))
       throw new HttpException('Not found. Request for new OTP.', HttpStatus.NOT_FOUND)
     }
 
@@ -65,7 +69,7 @@ export class AuthService {
     try {
       jwt.verify(token, process.env.JWT_SECRET)
       let decoded = jwt.decode(token, {complete: true})
-      return decoded.payload.id == id
+      return decoded.payload["id"] == id
     } catch (error) {
       return false
     }
@@ -79,8 +83,11 @@ export class AuthService {
     let phone = userData.phone;
 
     // check if id exists
+    const transaction = Sentry.startTransaction({op: "register", name: "Check if user exists"})
     let res = await connection.execute('select * from users where id = ?', [nid])
+    transaction.finish()
     if (res.rows.length > 0) {
+      Sentry.captureException(new Error("Existing user registration attempt"))
       throw new HttpException('User already exists', HttpStatus.CONFLICT)
     }
 
@@ -91,6 +98,7 @@ export class AuthService {
         message: 'User created'
       }
     } catch (error) {
+      Sentry.captureException(error)
       throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
