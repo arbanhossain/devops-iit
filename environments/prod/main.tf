@@ -1,4 +1,4 @@
-resource "google_cloud_run_service" "cloud-run-tf" {
+resource "google_cloud_run_service" "cloud-run-tf-prod" {
     name = "cloud-run-tf"
     location = "us-central1"
     project = "utilitarian-bee-244108"
@@ -6,7 +6,7 @@ resource "google_cloud_run_service" "cloud-run-tf" {
     template {
         spec {
             containers {
-                image = "gcr.io/utilitarian-bee-244108/asdasdasd:latest"
+                image = "gcr.io/utilitarian-bee-244108/main_image:latest"
                 ports {
                     container_port = 3000
                 }
