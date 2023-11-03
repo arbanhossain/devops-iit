@@ -20,7 +20,7 @@ Frontend: https://github.com/saadman-sakib/devops-frontend
 
 **Objective**: Dependable CI/CD Pipeline
 
-![Git Workflow Diagram]()
+![Git Workflow Diagram](https://gcdnb.pbrd.co/images/zL0Q8mCtT0Mw.png?o=1)
 
 A build is published everytime a commit is pushed to the `main` branch. GitHub Actions triggers a build on the Terraform stack. The Terraform stack is responsible for provisioning the infrastructure on Google Cloud Platform. It executes the `cloudbuild.yaml` build script which builds the Docker image and pushes it to Google Container Registry. The image is then deployed to Google Cloud Run.
 
