@@ -1,5 +1,5 @@
 import {Controller, Inject, Injectable, HttpException, HttpStatus} from '@nestjs/common';
-import { CreateIncomeDto } from './dto/createIncomeDto';
+import { CreateIncomeDto } from './dto/CreateIncomeDto';
 import { CalculatedTax } from './dto/CalculatedTax';
 
 @Injectable()
