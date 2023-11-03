@@ -43,7 +43,7 @@ steps:
   - | 
       if [ -d "environments/$BRANCH_NAME/" ]; then
         cd environments/$BRANCH_NAME
-        terraform plan
+        terraform plan -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" 
       else
         for dir in environments/*/
         do 
@@ -54,7 +54,7 @@ steps:
           echo "*************** TERRAFOM PLAN ******************"
           echo "******* At environment: ${env} ********"
           echo "*************************************************"
-          terraform plan || exit 1
+          terraform plan -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD"  || exit 1
           cd ../../
         done
       fi 
