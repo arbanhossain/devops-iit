@@ -3,4 +3,8 @@ import { Controller, Inject, Injectable, HttpException, HttpStatus } from '@nest
 @Injectable()
 export class DashboardService {
   constructor() { }
+
+  submitInfo(info: any) {
+    console.log(info);
+  }
 }
