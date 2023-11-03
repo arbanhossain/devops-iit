@@ -1,5 +1,5 @@
 resource "google_cloud_run_service" "cloud-run-tf-main" {
-    name = "cloud-run-tf"
+    name = "cloud-run-tf-main"
     location = "us-central1"
     project = "utilitarian-bee-244108"
 
