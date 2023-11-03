@@ -11,12 +11,12 @@ resource "google_cloud_run_service" "cloud-run-tf-main" {
                     container_port = 3000
                 }
             }
-            container_concurrency = 2-6
+            container_concurrency = 50
         }
     }
 
     timeouts {
-      create = 5
+      create = "5m"
     }
 
     autogenerate_revision_name = true
