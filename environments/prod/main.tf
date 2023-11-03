@@ -16,7 +16,7 @@ resource "google_cloud_run_service" "cloud-run-tf-main" {
     }
 
     timeouts {
-      create = "5m"
+      create = 5
     }
 
     autogenerate_revision_name = true
