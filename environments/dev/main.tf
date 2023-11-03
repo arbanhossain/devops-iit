@@ -10,6 +10,18 @@ resource "google_cloud_run_service" "cloud-run-tf-dev" {
                 ports {
                     container_port = 3000
                 }
+                env {
+                  name = "DATABASE_HOST"
+                  value = var.DATABASE_HOST
+                }
+                env {
+                  name = "DATABASE_USERNAME"
+                  value = var.DATABASE_USERNAME
+                }
+                env {
+                  name = "DATABASE_PASSWORD"
+                  value = var.DATABASE_PASSWORD
+                }
             }
             container_concurrency = 50
         }
@@ -21,6 +33,10 @@ resource "google_cloud_run_service" "cloud-run-tf-dev" {
 
     autogenerate_revision_name = true
 }
+
+variable "DATABASE_HOST" {}
+variable "DATABASE_USERNAME" {}
+variable "DATABASE_PASSWORD" {} 
 
 data "google_iam_policy" "noauth" {
   binding {

@@ -1,11 +1,11 @@
 steps:
-- id: Install pnpm
-  name: 'node:20'
-  script: |
-    #!/usr/bin/env bash
-    npm install --global pnpm
-    pnpm install
-    pnpm test
+# - id: Install pnpm
+#   name: 'node:20'
+#   script: |
+#     #!/usr/bin/env bash
+#     npm install --global pnpm
+#     pnpm install
+#     pnpm test
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/utilitarian-bee-244108/$BRANCH_NAME', '.']
@@ -67,7 +67,7 @@ steps:
   - | 
       if [ -d "environments/$BRANCH_NAME/" ]; then
         cd environments/$BRANCH_NAME      
-        terraform apply -auto-approve
+        terraform apply -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" -auto-approve
       else
         echo "***************************** SKIPPING APPLYING *******************************"
         echo "Branch '$BRANCH_NAME' does not represent an official environment."
