@@ -3,4 +3,5 @@ export class SubmissionDto {
   year: number;
   income: number;
   tax: number;
+  token: string;
 }
