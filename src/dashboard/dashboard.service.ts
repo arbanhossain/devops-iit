@@ -1,9 +1,9 @@
 import { Controller, Inject, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
-import connection from 'src/db/db';
+import connection from '../db/db';
 import { SubmissionDto } from './dto/SubmissionDto';
 
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class DashboardService {
