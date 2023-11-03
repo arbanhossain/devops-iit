@@ -12,9 +12,9 @@ export class DashboardController {
 
   @Get('db-test')
   async dbTest() : Promise<any> {
-    let res = await connection.promise().query('select * from users');
-    let [rows, fields, ...rest] = res;
-    return rows;
+    let res = await connection.execute('select * from users', [1])
+    // let [rows, fields, ...rest] = res;
+    return res.rows;
   }
 
 }
