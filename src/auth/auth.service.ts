@@ -61,10 +61,11 @@ export class AuthService {
     }
   }
 
-  isValidToken(token: string): boolean {
+  isValidToken(token: string, id: string): boolean {
     try {
       jwt.verify(token, process.env.JWT_SECRET)
-      return true
+      let decoded = jwt.decode(token, {complete: true})
+      return decoded.payload.id == id
     } catch (error) {
       return false
     }
