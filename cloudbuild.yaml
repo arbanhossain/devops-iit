@@ -1,0 +1,21 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/utilitarian-bee-244108/asdasdasd', '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/utilitarian-bee-244108/asdasdasd']
+- id: 'tf init'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: sh
+  args: ["-c","terraform init -upgrade "]
+- id: 'tf plan'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: sh
+  args: ["-c","terraform plan -out=plan.out"]    
+- id: 'tf apply'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: sh
+  args: ["-c","terraform apply plan.out"]  
+# images:
+# - gcr.io/utilitarian-bee-244108/asdasdasd

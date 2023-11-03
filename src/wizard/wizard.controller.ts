@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Query, HttpException, HttpStatus } from '@nestjs/common';
-import { CreateIncomeDto } from './dto/createIncomeDto';
+import { CreateIncomeDto } from './dto/CreateIncomeDto';
 import { WizardService } from './wizard.service';
 import { CalculatedTax } from './dto/CalculatedTax';
 
