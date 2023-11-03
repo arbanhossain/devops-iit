@@ -5,9 +5,17 @@ steps:
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/utilitarian-bee-244108/asdasdasd']
-# Deploy container image to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: ['run', 'deploy', 'test-cloud-run-service', '--image', 'gcr.io/utilitarian-bee-244108/asdasdasd', '--region', 'us-central1']
-images:
-- gcr.io/utilitarian-bee-244108/asdasdasd
+- id: 'tf init'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: sh
+  args: ["-c","terraform init -upgrade "]
+- id: 'tf plan'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: sh
+  args: ["-c","terraform plan -out=plan.out"]    
+- id: 'tf apply'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: sh
+  args: ["-c","terraform apply plan.out"]  
+# images:
+# - gcr.io/utilitarian-bee-244108/asdasdasd
