@@ -6,12 +6,17 @@ resource "google_cloud_run_service" "cloud-run-tf-main" {
     template {
         spec {
             containers {
-                image = "gcr.io/utilitarian-bee-244108/main_image:latest"
+                image = "gcr.io/utilitarian-bee-244108/main:latest"
                 ports {
                     container_port = 3000
                 }
             }
+            container_concurrency = 2-6
         }
+    }
+
+    timeouts {
+      create = "5m"
     }
 
     autogenerate_revision_name = true
