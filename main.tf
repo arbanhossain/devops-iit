@@ -13,6 +13,8 @@ resource "google_cloud_run_service" "cloud-run-tf" {
             }
         }
     }
+
+    autogenerate_revision_name = true
 }
 
 data "google_iam_policy" "noauth" {
