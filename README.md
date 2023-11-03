@@ -1,73 +1,48 @@
+Frontend: https://github.com/saadman-sakib/devops-frontend
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <h2>Architecture Overview</h2>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![Image of complete architecture]()
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+#### Tools and Technologies
+**Backend**: NestJS, Google Cloud Platform
+**Frontend**: NextJS, Vercel
+**Database**: PlanetScale, MySQL
+**CI/CD Pipeline**: Git, GitHub Actions, Google Cloud Build, Terraform
+**Containerization**: Docker, Google Container Registry
+**Monitoring**: Google Operations Suite, Vercel Analytics, PlanetScale Insights
+
+<p align="center">
+  <h2>Challenge 1</h2>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+**Objective**: Dependable CI/CD Pipeline
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+![Git Workflow Diagram]()
 
-## Installation
+A build is published everytime a commit is pushed to the `main` branch. GitHub Actions triggers a build on the Terraform stack. The Terraform stack is responsible for provisioning the infrastructure on Google Cloud Platform. It executes the `cloudbuild.yaml` build script which builds the Docker image and pushes it to Google Container Registry. The image is then deployed to Google Cloud Run.
 
-```bash
-$ yarn install
-```
 
-## Running the app
+<p align="center">
+  <h2>Challenge 2</h2>
+</p>
 
-```bash
-# development
-$ yarn run start
+**Objective**: Scalable infrastructure
 
-# watch mode
-$ yarn run start:dev
+![Two diagrams, one showing container scaling, the other showing database scaling]()
 
-# production mode
-$ yarn run start:prod
-```
+**Database**: For the problem at hand, the primary bottleneck seems to be the database. As the system will see a huge spike in traffic only during few days of a month, expending resources on-demand is the better choice. Traditional databases can usually scale only vertically, with horizontal scaling increasing complicacies. Using a <u>distributed database system</u> will allow for dynamic resource allocation. PlanetScale, powered with Vitess, partitions a large database into smaller parts. This reduces load on a single machine, and allows better scaling.
 
-## Test
+**Containers**: Google Cloud Platform allows adjusting the number of container instances based on demand. We set a minimum number of instances (1), and set it to scale whenever the need arises. This allows for better resource utilization, and reduces costs.
 
-```bash
-# unit tests
-$ yarn run test
+<p align="center">
+  <h2>Challenge 3</h2>
+</p>
 
-# e2e tests
-$ yarn run test:e2e
+**Objective**: Security
 
-# test coverage
-$ yarn run test:cov
-```
+![]()
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+As the system will be handling sensitive data, we implement OTP-based authentication along with JSON web tokens. To prevent brute-force attacks, we implement rate-limiting using Cloudflare's DDoS proxies and GCP's firewall configuration. The database is configured to allow traffic only from the backend. This ensures that the database is not exposed to the internet.
