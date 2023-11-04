@@ -39,7 +39,7 @@ export class AuthService {
       }
     } catch (error) {
       Sentry.captureException(new Error("OTP could not be sent"))
-      throw new HttpException('OTP not sent', HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(`OTP not sent ${error.toString()}`, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
@@ -55,6 +55,9 @@ export class AuthService {
       Sentry.captureException(new Error("OTP verification not resolved"))
       throw new HttpException('Not found. Request for new OTP.', HttpStatus.NOT_FOUND)
     }
+
+    // delete the row
+    await connection.execute('delete from otp where id = ?', [nid])
 
     // if yes, return success
     let token = jwt.sign({ id: nid }, process.env.JWT_SECRET, { expiresIn: 3600*8});
