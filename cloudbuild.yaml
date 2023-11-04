@@ -1,0 +1,94 @@
+steps:
+# Performs automated testing before build and stops the build processs
+# immediately if the tests dont pass
+# - id: Install pnpm
+#   name: 'node:20'
+#   script: |
+#     #!/usr/bin/env bash
+#     npm install --global pnpm
+#     pnpm install
+#     pnpm test
+
+# Build the container image depending on the current branch
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/utilitarian-bee-244108/$BRANCH_NAME', '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/utilitarian-bee-244108/$BRANCH_NAME']
+- id: 'tf init'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+      if [ -d "environments/$BRANCH_NAME/" ]; then
+        cd environments/$BRANCH_NAME
+        terraform init
+      else
+        for dir in environments/*/
+        do 
+          cd ${dir}   
+          env=${dir%*/}
+          env=${env#*/}
+          echo ""
+          echo "*************** TERRAFORM INIT ******************"
+          echo "******* At environment: ${env} ********"
+          echo "*************************************************"
+          terraform init || exit 1
+          cd ../../
+        done
+      fi 
+- id: 'tf plan'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      if [ -d "environments/$BRANCH_NAME/" ]; then
+        cd environments/$BRANCH_NAME
+        terraform plan -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" -var="API_KEY=$_API_KEY" -var="SENDER_ID=$_SENDER_ID" -var="JWT_SECRET=$_JWT_SECRET"  
+      else
+        for dir in environments/*/
+        do 
+          cd ${dir}   
+          env=${dir%*/}
+          env=${env#*/}  
+          echo ""
+          echo "*************** TERRAFOM PLAN ******************"
+          echo "******* At environment: ${env} ********"
+          echo "*************************************************"
+          terraform plan -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD"  || exit 1
+          cd ../../
+        done
+      fi 
+# [START tf-apply]
+- id: 'tf apply'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      if [ -d "environments/$BRANCH_NAME/" ]; then
+        cd environments/$BRANCH_NAME      
+        terraform apply -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" -var="API_KEY=$_API_KEY" -var="SENDER_ID=$_SENDER_ID" -var="JWT_SECRET=$_JWT_SECRET"  -auto-approve
+      else
+        echo "***************************** SKIPPING APPLYING *******************************"
+        echo "Branch '$BRANCH_NAME' does not represent an official environment."
+        echo "*******************************************************************************"
+      fi
+# - id: 'tf init'
+#   name: 'hashicorp/terraform:1.0.0'
+#   entrypoint: sh
+#   args: ["-c","terraform init -upgrade "]
+# - id: 'tf plan'
+#   name: 'hashicorp/terraform:1.0.0'
+#   entrypoint: sh
+#   args: ["-c","terraform plan -out=plan.out"]    
+# - id: 'tf apply'
+#   name: 'hashicorp/terraform:1.0.0'
+#   entrypoint: sh
+#   args: ["-c","terraform apply plan.out"]  
+options:
+  logging: CLOUD_LOGGING_ONLY 
+# images:
+# - gcr.io/utilitarian-bee-244108/asdasdasd
