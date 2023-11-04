@@ -1,11 +1,11 @@
 steps:
-# - id: Install pnpm
-#   name: 'node:20'
-#   script: |
-#     #!/usr/bin/env bash
-#     npm install --global pnpm
-#     pnpm install
-#     pnpm test
+- id: Install pnpm
+  name: 'node:20'
+  script: |
+    #!/usr/bin/env bash
+    npm install --global pnpm
+    pnpm install
+    pnpm test
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/utilitarian-bee-244108/$BRANCH_NAME', '.']
