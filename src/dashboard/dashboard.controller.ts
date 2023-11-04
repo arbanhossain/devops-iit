@@ -25,7 +25,7 @@ export class DashboardController {
     this.dashService.submitInfo(info);
   }
 
-  @Get('get-info')
+  @Post('get-info')
   getInfo(@Body() cred: InfoRequestDto) : any {
     return this.dashService.getInfo(cred.token, cred.id);
   }
