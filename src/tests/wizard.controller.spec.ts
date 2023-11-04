@@ -1,6 +1,21 @@
+import {Controller, Inject, Injectable, HttpException, HttpStatus} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WizardController } from '../wizard/wizard.controller';
 import { WizardService } from '../wizard/wizard.service';
+
+import * as Sentry from "@sentry/node";
+import { ProfilingIntegration } from "@sentry/profiling-node";
+
+Sentry.init({
+  dsn: 'https://83967f8eed989ca7c94af48c695b059b@o4506163775143936.ingest.sentry.io/4506163802406912',
+  integrations: [
+    new ProfilingIntegration(),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: 1.0,
+  // Set sampling rate for profiling - this is relative to tracesSampleRate
+  profilesSampleRate: 1.0,
+});
 
 describe('WizardController', () => {
   let wizardControl: WizardController;
