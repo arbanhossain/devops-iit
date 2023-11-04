@@ -20,9 +20,20 @@ Frontend: https://github.com/saadman-sakib/devops-frontend
 
 **Objective**: Dependable CI/CD Pipeline
 
+![](https://media.discordapp.net/attachments/1168215886465863844/1170176122936360990/image.png?ex=65581670&is=6545a170&hm=2080bb6d8e8fde63ffe6983a2d52ec5f81b860286ffdf05b2b2e1778e07ba6a4&=&width=660&height=670)
+
 ![Git Workflow Diagram](https://gcdnb.pbrd.co/images/zL0Q8mCtT0Mw.png?o=1)
 
-A build is published everytime a commit is pushed to the `main` branch. GitHub Actions triggers a build on the Terraform stack. The Terraform stack is responsible for provisioning the infrastructure on Google Cloud Platform. It executes the `cloudbuild.yaml` build script which builds the Docker image and pushes it to Google Container Registry. The image is then deployed to Google Cloud Run.
+
+- Cloud Build Trigger activates on every commit in designated branch
+- Automatically provisions a google compute instance for build environment
+- Runs the configured backend tests
+- Builds docker image from configured Dockerfile
+- uploads the image to Google Container Registry
+- then calls terraform to provision cloud run
+- Terraform pulls the image from container registry and deploys to cloudrun according to the instructions in main.tf
+- We have also configured terrafrom backend so that terraform uses Google Cloud Storage for storing its state files
+- We also authenticated terraform following the recommended IAM policy based way
 
 
 <p align="center">
@@ -44,6 +55,10 @@ A build is published everytime a commit is pushed to the `main` branch. GitHub A
 **Objective**: Security
 
 As the system will be handling sensitive data, we implement OTP-based authentication along with JSON web tokens. To prevent brute-force attacks, we implement rate-limiting using Cloudflare's DDoS proxies and GCP's firewall configuration. The database is configured to allow traffic only from the backend. This ensures that the database is not exposed to the internet.
+
+- Made sure all of our credentials are always going through environment variables set in GCP
+- terraform authentication is made through IAM account instead of username pass
+- Database wont accept traffic from anywhere except backend 
 
 <p align="center">
   <h2>Challenge 4</h2>
