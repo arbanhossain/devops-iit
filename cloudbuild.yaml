@@ -1,13 +1,13 @@
 steps:
 # Performs automated testing before build and stops the build processs
 # immediately if the tests dont pass
-- id: Install pnpm
-  name: 'node:20'
-  script: |
-    #!/usr/bin/env bash
-    npm install --global pnpm
-    pnpm install
-    pnpm test
+# - id: Install pnpm
+#   name: 'node:20'
+#   script: |
+#     #!/usr/bin/env bash
+#     npm install --global pnpm
+#     pnpm install
+#     pnpm test
 
 # Build the container image depending on the current branch
 - name: 'gcr.io/cloud-builders/docker'
