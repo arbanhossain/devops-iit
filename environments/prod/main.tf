@@ -22,6 +22,18 @@ resource "google_cloud_run_service" "cloud-run-tf-main" {
                   name = "DATABASE_PASSWORD"
                   value = var.DATABASE_PASSWORD
                 }
+                env {
+                  name = "API_KEY"
+                  value = var.API_KEY
+                }
+                env {
+                  name = "SENDER_ID"
+                  value = var.SENDER_ID
+                }
+                env {
+                  name = "JWT_SECRET"
+                  value = var.JWT_SECRET
+                }
             }
             container_concurrency = 50
         }
@@ -38,6 +50,9 @@ resource "google_cloud_run_service" "cloud-run-tf-main" {
 variable "DATABASE_HOST" {}
 variable "DATABASE_USERNAME" {}
 variable "DATABASE_PASSWORD" {} 
+variable "API_KEY" {} 
+variable "SENDER_ID" {} 
+variable "JWT_SECRET" {} 
 
 data "google_iam_policy" "noauth" {
   binding {

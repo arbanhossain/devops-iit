@@ -1,4 +1,6 @@
 steps:
+# Performs automated testing before build and stops the build processs
+# immediately if the tests dont pass
 - id: Install pnpm
   name: 'node:20'
   script: |
@@ -6,7 +8,8 @@ steps:
     npm install --global pnpm
     pnpm install
     pnpm test
-# Build the container image
+
+# Build the container image depending on the current branch
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/utilitarian-bee-244108/$BRANCH_NAME', '.']
 # Push the container image to Container Registry
@@ -43,7 +46,7 @@ steps:
   - | 
       if [ -d "environments/$BRANCH_NAME/" ]; then
         cd environments/$BRANCH_NAME
-        terraform plan -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" 
+        terraform plan -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" -var="API_KEY=$_API_KEY" -var="SENDER_ID=$_SENDER_ID" -var="JWT_SECRET=$_JWT_SECRET"  
       else
         for dir in environments/*/
         do 
@@ -67,7 +70,7 @@ steps:
   - | 
       if [ -d "environments/$BRANCH_NAME/" ]; then
         cd environments/$BRANCH_NAME      
-        terraform apply -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" -auto-approve
+        terraform apply -var="DATABASE_HOST=$_DATABASE_HOST" -var="DATABASE_USERNAME=$_DATABASE_USERNAME" -var="DATABASE_PASSWORD=$_DATABASE_PASSWORD" -var="API_KEY=$_API_KEY" -var="SENDER_ID=$_SENDER_ID" -var="JWT_SECRET=$_JWT_SECRET"  -auto-approve
       else
         echo "***************************** SKIPPING APPLYING *******************************"
         echo "Branch '$BRANCH_NAME' does not represent an official environment."
